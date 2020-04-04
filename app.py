@@ -1,15 +1,57 @@
 from tkinter import *
 import sqlite3
+from tkcalendar import DateEntry
+from tkinter import ttk
 
 root=Tk()
 root.geometry("600x600")
 conn=sqlite3.connect('user.db')
 cur=conn.cursor()
 
+def addevent():
+    cur=conn.cursor()
+    cur.execute("INSERT INTO Event(user_id,Date,Title) VALUES(\"{id}\",\"{date}\",\"{title}\");".format(id=user_id,date=cal.get(),title=abt.get()))
+    conn.commit()
+
+def add():
+    global cal
+    global abt
+    child4 = Tk()
+    child4.geometry("400x400")
+    ttk.Label(child4, text='Choose date').pack(padx=10, pady=10)
+
+    cal = DateEntry(child4, width=12, background='darkblue',
+                    foreground='white', borderwidth=2)
+    cal.pack(padx=10, pady=10)
+    abtlb=Label(child4,text="Title of event").pack()
+    abt=Entry(child4)
+    abt.pack()
+    eventsub=Button(child4,text="Submit",command=addevent)
+    eventsub.pack()
+
+
+
+
+def check():
+    global var
+    child5=Toplevel()
+    cur=conn.cursor()
+    cur.execute("SELECT id,Date,Title FROM Event WHERE user_id=\"{userid}\"".format(userid=user_id))
+    mylist=cur.fetchall()
+    print(mylist)
+    var = IntVar(child5, 0)
+    for x in mylist:
+        Radiobutton(child5, text=x[2], variable=var, value=x[0]).pack()
+    bttn=Button(child5,text="ok",command=Mywedding)
+    bttn.pack()
+
 def dashboard():
     child3=Toplevel()
     child3.geometry("800x800")
-    addbtn=Button
+    addbtn=Button(child3,text="ADD A Wedding",command=add)
+    addbtn.pack()
+    chkbtn=Button(child3,text="Check My Weddings",command=check)
+    chkbtn.pack()
 
 def fillup():
     cur = conn.cursor()
@@ -19,11 +61,13 @@ def fillup():
     conn.commit()
 
 def loggedin():
+    global user_id
     cur=conn.cursor()
-    cur.execute("SELECT Name,Password FROM User WHERE Name=\"{name}\" and Password=\"{password}\"".format(name=name2.get(),password=password2.get()))
+    cur.execute("SELECT userid,Name,Password FROM User WHERE Name=\"{name}\" and Password=\"{password}\"".format(name=name2.get(),password=password2.get()))
     ans=cur.fetchall()
     print(ans)
     if len(ans)==1:
+        user_id=ans[0][0]
         dashboard()
     else:
         errorlabel=Label(child2,text="Wrong Details!").pack()
