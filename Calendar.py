@@ -1,115 +1,136 @@
-import calendar
-import datetime
-import sys
+from tkinter import *
+import sqlite3
 
-# imports correct version of tkinter based on python version
-if sys.version[0] == '2':
-    import Tkinter as tk
-else:
-    import tkinter as tk
+root = Tk()
+conn = sqlite3.connect("database.db")
+cur = conn.cursor()
+logged_in_user = None
 
 
-class Calendar:
-    # Instantiation
-    def __init__(self, parent, values):
-        self.values = values
-        self.parent = parent
-        self.cal = calendar.TextCalendar(calendar.SUNDAY)
-        self.year = datetime.date.today().year
-        self.month = datetime.date.today().month
-        self.wid = []
-        self.day_selected = 1
-        self.month_selected = self.month
-        self.year_selected = self.year
-        self.day_name = ''
+def dashboard():
+    dash = Toplevel()
+    Label(dash, text="Username: ").grid(row=0, column=0)
+    uname = Entry(dash)
+    uname.grid(row=0, column=1)
+    Label(dash, text="Password: ").grid(row=1, column=0)
+    paass = Entry(dash)
+    paass.grid(row=1, column=1)
+    btn = Button(dash, text="Login", command=oldNew)
+    btn.grid(row=2)
 
-        self.setup(self.year, self.month)
 
-    # Resets the buttons
-    def clear(self):
-        for w in self.wid[:]:
-            w.grid_forget()
-            # w.destroy()
-            self.wid.remove(w)
+def oldNew():
+    oldNewWindow = Toplevel()
+    oldBtn = Button(oldNewWindow, text="Old Customer", command=old)
+    newBtn = Button(oldNewWindow, text="New Customer", command=new)
+    oldBtn.grid(row=0, column=0)
+    newBtn.grid(row=0, column=1)
 
-    # Moves to previous month/year on calendar
-    def go_prev(self):
-        if self.month > 1:
-            self.month -= 1
-        else:
-            self.month = 12
-            self.year -= 1
-        # self.selected = (self.month, self.year)
-        self.clear()
-        self.setup(self.year, self.month)
 
-    # Moves to next month/year on calendar
-    def go_next(self):
-        if self.month < 12:
-            self.month += 1
-        else:
-            self.month = 1
-            self.year += 1
+def old():
+    global logged_in_user
+    oldCust = Toplevel()
+    Label(oldCust, text="Enter the phone number: ").grid(row=0, column=0)
+    num = Entry(oldCust)
+    phoneNum = int(num.get())
+    # rows = cur.execute("SELECT * FROM customer c, car_dets cd, repair as r WHERE c.phone="+str(phoneNum)+" AND (cd.ownerId=c.id AND (cd.id=r.carId AND c.id=r.ownerId))")
+    # print(rows)
 
-        # self.selected = (self.month, self.year)
-        self.clear()
-        self.setup(self.year, self.month)
 
-    # Called on date button press
-    def selection(self, day, name):
-        self.day_selected = day
-        self.month_selected = self.month
-        self.year_selected = self.year
-        self.day_name = name
+def new():
+    newCust = Toplevel()
 
-        # Obtaining data
-        self.values['day_selected'] = day
-        self.values['month_selected'] = self.month
-        self.values['year_selected'] = self.year
-        self.values['day_name'] = name
-        self.values['month_name'] = calendar.month_name[self.month_selected]
+    Label(newCust, text="Name: ").grid(row=0, column=0)
+    Label(newCust, text="Phone Number: ").grid(row=1, column=0)
+    Label(newCust, text="Email: ").grid(row=2, column=0)
+    Label(newCust, text="License Number: ").grid(row=3, column=0)
 
-        self.clear()
-        self.setup(self.year, self.month)
+    name = Entry(newCust)
+    phNum = Entry(newCust)
+    email = Entry(newCust)
+    liceNum = Entry(newCust)
+    name.grid(row=0, column=1)
+    phNum.grid(row=1, column=1)
+    email.grid(row=2, column=1)
+    liceNum.grid(row=3, column=1)
 
-    def setup(self, y, m):
-        # Tkinter creation
-        left = tk.Button(self.parent, text='<', command=self.go_prev)
-        self.wid.append(left)
-        left.grid(row=0, column=1)
+    cmd = "CREATE TABLE IF NOT EXISTS 'customer' ( 'id' INTEGER DEFAULT NULL PRIMARY KEY AUTOINCREMENT, 'name' TEXT DEFAULT NULL, 'phone' NUMERIC DEFAULT NULL, 'email' TEXT DEFAULT NULL, 'licenseNum' TEXT DEFAULT NULL);"
+    cmd1 = "CREATE TABLE IF NOT EXISTS 'car_det' ( 'id' INTEGER DEFAULT NULL PRIMARY KEY AUTOINCREMENT, 'ownerId' NUMERIC DEFAULT NULL REFERENCES 'customer' ('id'), 'type' TEXT DEFAULT NULL, 'name' TEXT DEFAULT NULL, 'kilometers' INTEGER DEFAULT NULL, 'new field' TEXT DEFAULT NULL, 'insurance' TEXT DEFAULT NULL, 'engineNum' TEXT DEFAULT NULL, 'chassisNum' TEXT DEFAULT NULL);"
+    cmd2 = "CREATE TABLE IF NOT EXISTS 'repair' ( 'id' INTEGER DEFAULT NULL PRIMARY KEY AUTOINCREMENT, 'ownerId' NUMERIC DEFAULT NULL REFERENCES 'customer' ('id'), 'carId' NUMERIC DEFAULT NULL REFERENCES 'car_det' ('id'), 'engine' INTEGER DEFAULT NULL, 'carWash' TEXT DEFAULT NULL, 'tireChange' INTEGER DEFAULT NULL, 'bodyReshaping' INTEGER DEFAULT NULL, 'desc_engine' TEXT DEFAULT NULL, 'desc_tire' TEXT DEFAULT NULL, 'desc_body' TEXT DEFAULT NULL);"
+    cur.execute(cmd)
+    cur.execute(cmd1)
+    cur.execute(cmd2)
+    conn.commit()
 
-        header = tk.Label(self.parent, height=2, text='{}   {}'.format(calendar.month_abbr[m], str(y)))
-        self.wid.append(header)
-        header.grid(row=0, column=2, columnspan=3)
+    def insertCust():
+        global logged_in_user
+        cmd = "INSERT INTO customer(name, phone, email, licenseNum) VALUES (\"" + name.get() + "\", " + str(
+            phNum.get()) + ", \"" + email.get() + "\", \"" + liceNum.get() + "\")"
+        cur.execute(cmd)
+        conn.commit()
+        cur.execute("SELECT id FROM customer WHERE phone=" + str(phNum.get()))
+        id = cur.fetchall()
+        logged_in_user = id[0][0]
+        carDetails()
 
-        right = tk.Button(self.parent, text='>', command=self.go_next)
-        self.wid.append(right)
-        right.grid(row=0, column=5)
+    submitBtn = Button(newCust, text="Submit", command=insertCust)
+    submitBtn.grid(row=4)
 
-        days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
-        for num, name in enumerate(days):
-            t = tk.Label(self.parent, text=name[:3])
-            self.wid.append(t)
-            t.grid(row=1, column=num)
 
-        for w, week in enumerate(self.cal.monthdayscalendar(y, m), 2):
-            for d, day in enumerate(week):
-                if day:
-                    # print(calendar.day_name[day])
-                    b = tk.Button(self.parent, width=1, text=day,
-                                  command=lambda day=day: self.selection(day, calendar.day_name[(day) % 7]))
-                    self.wid.append(b)
-                    b.grid(row=w, column=d)
+def carDetails():
+    carDet = Toplevel()
+    Label(carDet, text="Car Type: ").grid(row=0, column=0)
+    Label(carDet, text="Name(Eg. Hyundai Santro Zls): ").grid(row=1, column=0)
+    Label(carDet, text="Kilometers: ").grid(row=2, column=0)
+    Label(carDet, text="Engine Number: ").grid(row=3, column=0)
+    Label(carDet, text="Chassis Number: ").grid(row=4, column=0)
+    Label(carDet, text="Insurance Number: ").grid(row=5, column=0)
 
-        sel = tk.Label(self.parent, height=2, text='{} {} {} {}'.format(
-            self.day_name, calendar.month_name[self.month_selected], self.day_selected, self.year_selected))
-        self.wid.append(sel)
-        sel.grid(row=8, column=0, columnspan=7)
+    carType = StringVar()
+    suv = Radiobutton(carDet, text="SUV", variable=carType, value="suv")
+    hatch = Radiobutton(carDet, text="Hatchback", variable=carType, value="hatchback")
+    sedan = Radiobutton(carDet, text="Sedan", variable=carType, value="sedan")
+    suv.grid(row=0, column=1)
+    hatch.grid(row=0, column=2)
+    sedan.grid(row=0, column=3)
 
-        ok = tk.Button(self.parent, width=5, text='OK', command=self.kill_and_save)
-        self.wid.append(ok)
-        ok.grid(row=9, column=2, columnspan=3, pady=10)
+    carName = Entry(carDet)
+    carName.grid(row=1, column=1)
+    km = Entry(carDet)
+    km.grid(row=2, column=1)
+    engNum = Entry(carDet)
+    engNum.grid(row=3, column=1)
+    chasNum = Entry(carDet)
+    chasNum.grid(row=4, column=1)
+    insNum = Entry(carDet)
+    insNum.grid(row=5, column=1)
 
-    # Quit out of the calendar and terminate tkinter instance.
-    def kill_and_save(self):
-        self.parent.destroy()
+    def insertCar():
+        cmd = "INSERT INTO car_det(ownerId, type, name, kilometers, insurance, engineNum, chassisNum) VALUES (" + str(
+            logged_in_user) + ", \"" + carType.get() + "\", \"" + carName.get() + "\", " + str(
+            km.get()) + ", \"" + insNum.get() + "\", \"" + str(engNum.get()) + "\", \"" + chasNum.get() + "\")"
+        cur.execute(cmd)
+        conn.commit()
+        repair()
+
+    submitBtn = Button(carDet, text="Submit", command=insertCar)
+    submitBtn.grid(row=6)
+
+
+def repair():
+    repair = Toplevel()
+    desc_eng = desc_tire = desc_body = ""
+    Label(repair, text="Engine Repair").grid(row=0, column=0)
+    Label(repair, text="Car Wash").grid(row=1, column=0)
+    Label(repair, text="Tires Change").grid(row=2, column=0)
+    Label(repair, text="Body Reshaping").grid(row=3, column=0)
+
+    engRep = IntVar()
+    yes = Radiobutton(repair, text="Yes", variable=engRep, value=1)
+    no = Radiobutton(repair, text="No", variable=engRep, value=0)
+    yes.grid(row=0, column=1)
+    no.grid(row=0, column=2)
+
+
+dashboard()
+root.mainloop()
