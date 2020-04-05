@@ -7,7 +7,7 @@ root=Tk()
 root.geometry("600x600")
 conn=sqlite3.connect('user.db')
 cur=conn.cursor()
-lol=0
+
 def budget():
     global bud
     global days
@@ -106,6 +106,22 @@ def calc():
         if ev4.get()==1:
             remaining=remaining-20000
         print(remaining)
+    if remaining<0:
+        print("You Have",-remaining," Less")
+        #do you want to increase budget or change your decisions?
+        #increasebudget()
+        #changedecision
+    if remaining==0:
+        print("Perfect bitchhhh")
+        #result()
+    if remaining>0:
+        print("Congrats you still have",remaining," amount left")
+        #do you wnt to add any other things?
+        #no?result()
+        #yes?changedecision
+
+
+
 
 def details():
     global mybudget
@@ -164,15 +180,15 @@ def details():
 
 
 def hotelm():
-
+    global hotel1
+    hotel1 = StringVar()
+    hotel1.set("Select category")
+    drop1 = OptionMenu(child6, hotel1, "Delux", "2 Star", "3 Star", "5 Star")
     if CheckVar1.get() == 1:
-        global hotel1
-        hotel1 = StringVar()
-        hotel1.set("Select category")
-        drop1 = OptionMenu(child6, hotel1, "Delux", "2 Star", "3 Star", "5 Star")
         drop1.grid(row=0, column=1)
     else:
-        drop.destroy()
+        drop1.destroy()
+
 def photom():
     if CheckVar2.get() == 1:
         global photo1
