@@ -10,15 +10,18 @@ cur=conn.cursor()
 lol=0
 def budget():
     global bud
+    global days
     child7=Toplevel()
     child7.geometry("100x100")
+    days=Entry(child7)
+    days.pack()
     bud=Entry(child7)
     bud.pack()
     submit=Button(child7,text="Submit",command=details)
     submit.pack()
 
 def calc():
-    remaining=value
+    remaining=int(mybudget)
     print(remaining)
     if CheckVar1.get()==1:
         one=100000
@@ -26,13 +29,83 @@ def calc():
         three=2000000
         five=4000000
         if hotel1.get()=="Delux":
-            remaining=value-one
+            remaining=remaining-one
         elif hotel1.get()=="2 Star":
-            remaining=value-two
+            remaining=remaining-two
         elif hotel1.get()=="3 Star":
-            remaining=value-three
+            remaining=remaining-three
         elif hotel1.get()=="5 Star":
-            remaining=value-five
+            remaining=remaining-five
+    print(remaining)
+    if CheckVar2.get()==1:
+        if photo1.get()=="Basic":
+            remaining=remaining-5000
+        elif photo1.get()=="Mid":
+            remaining=remaining-10000
+        elif photo1.get()=="Top Professionals":
+            remaining=remaining-20000
+    print(remaining)
+    if CheckVar3.get()==1:
+        if decoration1.get()=="Basic":
+            remaining=remaining-50000
+        elif decoration1.get()=="Mid":
+            remaining=remaining-2000000
+        elif decoration1.get()=="Extraordinary":
+            remaining=remaining-5000000
+    print(remaining)
+    if CheckVar4.get()==1:
+        remaining=remaining-10000
+    print(remaining)
+    if CheckVar5.get()==1:
+        catguest1=int(catguest.get())
+        no_of_days1=int(no_of_days)
+        if catering1.get()=="Good":
+            remaining=remaining-(catguest1*500*no_of_days1) #TODO no_of_days add
+        if catering1.get()=="Best":
+            remaining=remaining-(catguest1*1000*no_of_days1)
+        if catering1.get()=="Premium":
+            remaining=remaining-(catguest1*2000*no_of_days1)
+    print(remaining)
+    if CheckVar6.get()==1:
+        if bridal1.get()=="Classic Lehenga":
+            remaining=remaining-250000
+        elif bridal1.get()=="Diamond Lehenga":
+            remaining=remaining-500000
+        elif bridal1.get()=="Gowm":
+            remaining=remaining-100000
+        elif bridal1.get()=="Saree":
+            remaining=remaining-150000
+    print(remaining)
+    if CheckVar7.get()==1:
+        if groom1.get()=="Sherwani":
+            remaining=remaining-50000
+        elif groom1.get()=="Tuxedo/Suit":
+            remaining=remaining-100000
+    print(remaining)
+    if CheckVar8.get()==1:
+        if ring1.get()=="Gold":
+            remaining=remaining-100000
+        elif ring1.get()=="Diamind":
+            remaining=remaining-200000
+        elif ring1.get()=="Silver":
+            remaining=remaining-50000
+        print(remaining)
+    if CheckVar9.get()==1:
+        remaining=remaining-20000
+        print(remaining)
+    if CheckVar10.get()==1:
+        remaining=remaining-10000
+        print(remaining)
+    if CheckVar11.get()==1:
+        if ev1.get()==1:
+            remaining=remaining-250000
+        if ev2.get()==1:
+            remaining=remaining-50000
+        if ev3.get()==1:
+            remaining=remaining-20000
+        if ev4.get()==1:
+            remaining=remaining-20000
+        print(remaining)
 
 def details():
     global mybudget
@@ -48,6 +121,8 @@ def details():
     global CheckVar10
     global CheckVar11
     global child6
+    global no_of_days
+    no_of_days=days.get()
     mybudget=bud.get()
     child6=Toplevel()
     child6.geometry("800x800")
@@ -89,7 +164,9 @@ def details():
 
 
 def hotelm():
+
     if CheckVar1.get() == 1:
+        global hotel1
         hotel1 = StringVar()
         hotel1.set("Select category")
         drop1 = OptionMenu(child6, hotel1, "Delux", "2 Star", "3 Star", "5 Star")
@@ -98,14 +175,16 @@ def hotelm():
         drop.destroy()
 def photom():
     if CheckVar2.get() == 1:
+        global photo1
         photo1 = StringVar()
         photo1.set("Select category")
-        drop2 = OptionMenu(child6, photo1, "Basic", "Mid", "Top Professionsals")
+        drop2 = OptionMenu(child6, photo1, "Basic", "Mid", "Top Professionals")
         drop2.grid(row=1, column=1)
     else:
         drop.destroy()
 def decorationm():
     if CheckVar3.get() == 1:
+        global decoration1
         decoration1 = StringVar()
         decoration1.set("Select category")
         drop3 = OptionMenu(child6, decoration1, "Basic", "Good", "Extraordinary")
@@ -114,6 +193,8 @@ def decorationm():
         drop.destroy()
 def cateringm():
     if CheckVar5.get() == 1:
+        global catguest
+        global catering1
         catguest=Entry(child6)
         catguest.grid(row=4,column=1)
         catering1 = StringVar()
@@ -125,27 +206,30 @@ def cateringm():
 
 def bridalm():
     if CheckVar6.get() == 1:
+        global bridal1
         bridal1 = StringVar()
         bridal1.set("Select category")
-        drop5 = OptionMenu(child6, bridal1, "Classic Lehenga", "Diamond Lehenga", "Gowm", "Saree")
+        drop5 = OptionMenu(child6, bridal1, "Classic Lehenga", "Diamond Lehenga", "Gowm", "Saree") # 2.5l 5l 1l 1.5l
         drop5.grid(row=5, column=1)
     else:
         drop.destroy()
 
 def groomm():
     if CheckVar7.get() == 1:
+        global groom1
         groom1 = StringVar()
         groom1.set("Select category")
-        drop6 = OptionMenu(child6, groom1, "Sherwani", "Tuxedo/Suit")
+        drop6 = OptionMenu(child6, groom1, "Sherwani", "Tuxedo/Suit") #50t 1l
         drop6.grid(row=6, column=1)
     else:
         drop.destroy()
 
 def ringm():
     if CheckVar8.get() == 1:
+        global ring1
         ring1 = StringVar()
         ring1.set("Select category")
-        drop7 = OptionMenu(child6, ring1, "Gold", "Diamond", "Silver")
+        drop7 = OptionMenu(child6, ring1, "Gold", "Diamond", "Silver") #1l 2l 50t
         drop7.grid(row=7, column=1)
     else:
         drop.destroy()
@@ -153,15 +237,19 @@ def ringm():
 def eventm():
 
     if CheckVar11.get() == 1:
+        global ev1
+        global ev2
+        global ev3
+        global ev4
         ev1=IntVar()
         ev2=IntVar()
         ev3=IntVar()
         ev4=IntVar()
-        eve1=Checkbutton(child6,text="Sangeet",onvalue=1,offvalue=0,variable=ev1)
+        eve1=Checkbutton(child6,text="Sangeet",onvalue=1,offvalue=0,variable=ev1) #2.5l
         eve1.grid(row=11,column=1)
-        eve2=Checkbutton(child6,text="Cocktail Party",onvalue=1,offvalue=0,variable=ev2)
-        eve3=Checkbutton(child6,text="Mehendi",onvalue=1,offvalue=0,variable=ev3)
-        eve4=Checkbutton(child6,text="Haldi",onvalue=1,offvalue=0,variable=ev4)
+        eve2=Checkbutton(child6,text="Cocktail Party",onvalue=1,offvalue=0,variable=ev2) #50t
+        eve3=Checkbutton(child6,text="Mehendi",onvalue=1,offvalue=0,variable=ev3) #20t
+        eve4=Checkbutton(child6,text="Haldi",onvalue=1,offvalue=0,variable=ev4)#20t
         eve2.grid(row=12,column=1)
         eve3.grid(row=13,column=1)
         eve4.grid(row=10,column=1)
