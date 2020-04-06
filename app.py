@@ -4,11 +4,11 @@ from tkcalendar import DateEntry
 from tkinter import ttk
 from PIL import ImageTk,Image
 
-root=Tk()
-root.geometry("600x580")
-myimg= ImageTk.PhotoImage(Image.open("login.jpg"))
-mylabel= Label(root,image=myimg)
-mylabel.pack()
+# root=Tk()
+# root.geometry("600x580")
+# myimg= ImageTk.PhotoImage(Image.open("login.jpg"))
+# mylabel= Label(root,image=myimg)
+# mylabel.pack()
 
 conn=sqlite3.connect('user.db')
 cur=conn.cursor()
@@ -19,59 +19,7 @@ totalvalue=0
 
 
 def details2():
-    global CheckVar1
-    global CheckVar2
-    global CheckVar3
-    global CheckVar4
-    global CheckVar5
-    global CheckVar6
-    global CheckVar7
-    global CheckVar8
-    global CheckVar9
-    global CheckVar10
-    global CheckVar11
-    global child6
-    global no_of_days
-    child7.withdraw()
-    no_of_days=days.get()
-    mybudget=bud.get()
-    child6=Toplevel()
-    child6.geometry("800x800")
-    CheckVar1 = IntVar(value=int(mycategory1[0]))
-    CheckVar2 = IntVar(value=int(mycategory1[1]))
-    CheckVar3 = IntVar(value=int(mycategory1[2]))
-    CheckVar4 = IntVar(value=int(mycategory1[3]))
-    CheckVar5 = IntVar(value=int(mycategory1[4]))
-    CheckVar6 = IntVar(value=int(mycategory1[5]))
-    CheckVar7 = IntVar(value=int(mycategory1[6]))
-    CheckVar8 = IntVar(value=int(mycategory1[7]))
-    CheckVar9 = IntVar(value=int(mycategory1[8]))
-    CheckVar10 = IntVar(value=int(mycategory1[9]))
-    CheckVar11 = IntVar(value=int(mycategory1[10]))
-    hotel = Checkbutton(child6, text="Hotel/Staying Facilities", variable=CheckVar1,onvalue=1, offvalue=0,command=hotelm)
-    photo = Checkbutton(child6, text="Photography & Videography", variable=CheckVar2,onvalue=1, offvalue=0,command=photom)
-    decoration = Checkbutton(child6, text="Decoration", variable=CheckVar3,onvalue=1, offvalue=0,command=decorationm)
-    transportation = Checkbutton(child6, text="Transportation", variable=CheckVar4,onvalue=1, offvalue=0,anchor="w",command=setup)
-    catering = Checkbutton(child6, text="Catering Services", variable=CheckVar5,onvalue=1, offvalue=0,command=cateringm)
-    bridal = Checkbutton(child6, text="Bridal Attire", variable=CheckVar6,onvalue=1, offvalue=0,command=bridalm)
-    groom = Checkbutton(child6, text="Groom Attire", variable=CheckVar7,onvalue=1, offvalue=0,command=groomm)
-    ring = Checkbutton(child6, text="Ring", variable=CheckVar8,onvalue=1, offvalue=0,command=ringm)
-    music = Checkbutton(child6, text="Music", variable=CheckVar9,onvalue=1, offvalue=0,command=setup)
-    makeup = Checkbutton(child6, text="Makeup", variable=CheckVar10,onvalue=1, offvalue=0,command=setup)
-    event = Checkbutton(child6, text="Ceremonies/Events", variable=CheckVar11, onvalue=1, offvalue=0,command=eventm)
-    hotel.grid(sticky="W",row=0,column=0)
-    photo.grid(sticky="W",row=1,column=0)
-    decoration.grid(sticky="W",row=2,column=0)
-    transportation.grid(sticky="W",row=3,column=0)
-    catering.grid(sticky="W",row=4,column=0)
-    bridal.grid(sticky="W",row=5,column=0)
-    groom.grid(sticky="W",row=6,column=0)
-    ring.grid(sticky="W",row=7,column=0)
-    music.grid(sticky="W",row=8,column=0)
-    makeup.grid(sticky="W",row=9,column=0)
-    event.grid(sticky="W",row=10,column=0)
-    but=Button(child6,text="2",command=lambda:calc(mybudget))
-    but.grid(row=11,column=0)
+    child8.withdraw()
 
 #DONE
 def budget():
@@ -101,18 +49,36 @@ def budget():
     child7.mainloop()
 
 def changebudget():
+    child8.withdraw()
+    global child9
     global days2
     global bud2
     global mybudget
     child9 = Toplevel()
-    child9.geometry("100x100")
-    days2 = Entry(child9)
-    days2.pack()
-    bud2 = Entry(child9)
-    bud2.pack()
-    submit = Button(child9, text="Submit", command=lambda: calc(bud2.get()))
+    child9.geometry("400x370")
+    myimg = ImageTk.PhotoImage(Image.open("home.jpg"))
+    mylabel = Label(child9, image=myimg)
+    mylabel.pack()
+    daylb = Label(child9, text="No of Days: ", bg="#F8D7FD")
+    daylb.pack()
+    daylb.place(x=60, y=100)
+    days = Entry(child9, bg="#F8D7FD")
+    days.pack()
+    days.place(x=160, y=100)
+    budlb = Label(child9, text="Budget: ", bg="#F8D7FD")
+    budlb.pack()
+    budlb.place(x=60, y=140)
+    bud = Entry(child9, bg="#F8D7FD")
+    bud.pack()
+    bud.place(x=160, y=140)
+    submit = Button(child9, text="Submit", command=lambda: calcpre(bud.get()), bg="#ab05e8", pady=10, padx=30)
     submit.pack()
+    submit.place(x=160, y=180)
+    child9.mainloop()
 
+def calcpre(val):
+    child9.withdraw()
+    calc(val)
 
 def store():
     listToStr = ''.join(map(str,detaillist))
@@ -151,10 +117,14 @@ def result2():
     totalans.grid(row=a,column=1)
 
 def calc(mybudget):
-
+    global child8
     global totalvalue
     child8=Toplevel()
     child8.geometry("400x400")
+    myimg = ImageTk.PhotoImage(Image.open("price.jpg"))
+    mylabel = Label(child8, image=myimg)
+    mylabel.pack()
+    mylabel.place(x=0, y=0)
     remaining=int(mybudget)
     print(remaining)
     if CheckVar1.get()==1:
@@ -303,44 +273,53 @@ def calc(mybudget):
     price[11] = str(totalvalue)
 
     if remaining<0:
+
         print("You Have",-remaining," Less")
         mystr="You Have "+str(-remaining)+" Less"
-        rem=Label(child8,text=mystr)
+        rem=Label(child8,text=mystr, pady=5,bg="#EFA5FD")
         rem.pack()
+        rem.place(x=150,y=20)
         #do you want to increase budget or change your decisions?
-        incbtn=Button(child8,text="Increase Budget",command=changebudget)
+        incbtn=Button(child8,text="Increase Budget",command=changebudget, pady=10, padx=20,bg="#ab05e8")
         incbtn.pack()
-        chgbtn=Button(child8,text="Change Decisions",command=details)
+        incbtn.place(x=150,y=100)
+        chgbtn=Button(child8,text="Change Decisions",command=details, pady=10, padx=20,bg="#ab05e8")
         chgbtn.pack()
+        chgbtn.place(x=150,y=150)
     if remaining==0:
         print("Perfect bitchhhh")
         mystr="Perfect Bitchhhhh"
-        mylbl=Label(child8,text=mystr)
+        mylbl=Label(child8,text=mystr,bg="#EFA5FD")
         mylbl.pack()
-        result=Button(child8,text="See Result",command=store)
+        mylbl.place(x=150,y=20)
+        result=Button(child8,text="See Result",command=store, pady=10, padx=20,bg="#ab05e8")
         result.pack()
-        mm=Button(child8,text="Main Menu",command=savedetails)
+        result.place(x=150,y=100)
+        mm=Button(child8,text="Main Menu",command=dashboard, pady=10, padx=20,bg="#ab05e8")
         mm.pack()
+        mm.place(x=150,y=150)
         #result()
     if remaining>0:
-        print("Congrats you still have",remaining," amount left")
-        mystr="Congrats you still have"+str(remaining)+" amount remaining"
-        mylbl=Label(child8,text=mystr)
+        print("Congrats you still have ",remaining," amount left")
+        mystr="Congrats you still have "+str(remaining)+" amount remaining"
+        mylbl=Label(child8,text=mystr,bg="#EFA5FD")
         mylbl.pack()
+        mylbl.place(x=50,y=20)
         #do you wnt to add any other things?
-        addbtn=Button(child8,text="Add more things!",command=details2)
+        addbtn=Button(child8,text="Add more things!",command=details2, pady=10, padx=20,bg="#ab05e8")
         addbtn.pack()
-        result = Button(child8, text="See Result", command=store)
+        addbtn.place(x=150,y=80)
+        result = Button(child8, text="See Result", command=store, pady=10, padx=20,bg="#ab05e8")   #TODO DESIGN
         result.pack()
-        mm = Button(child8, text="Main Menu", command=savedetails)
+        result.place(x=150,y=150)
+        mm = Button(child8, text="Main Menu", command=dashboard, pady=10, padx=20,bg="#ab05e8")
         mm.pack()
+        mm.place(x=150,y=220)
 
         #no?result()
         #yes?changedecision
+    child8.mainloop()
 
-
-def savedetails():
-    pass
 
 def details():
     global CheckVar1
@@ -527,21 +506,33 @@ def add():
     global child4
     global cal
     global abt
-    child4 = Tk()
-    child4.geometry("400x400")
-    # myimg = ImageTk.PhotoImage(Image.open("login.jpg"))
-    # mylabel = Label(child4, image=myimg)
-    # mylabel.pack()
-    ttk.Label(child4, text='Choose date').pack(padx=10, pady=10)
+    child4 = Toplevel()
+    child4.geometry("400x370")
+    # child4.configure(bg="#EFA5FD")
+    myimg = ImageTk.PhotoImage(Image.open("home.jpg"))
+    mylabel = Label(child4, image=myimg)
+    mylabel.pack()
+    mylabel.place(x=0,y=0)
 
-    cal = DateEntry(child4, width=12, background='darkblue',foreground='white', borderwidth=2)
-    cal.pack(padx=10, pady=10)
-    abtlb=Label(child4,text="Title of event")
+
+    a=ttk.Label(child4, text='Choose date',background="#EFA5FD")
+    a.pack()
+    a.place(x=50,y=100)
+
+    cal = DateEntry(child4, width=12, background='#ab05e8',foreground='white', borderwidth=2)
+    cal.pack()
+    cal.place(x=150,y=100)
+    abtlb=Label(child4,text="Title of event",bg="#EFA5FD")
     abtlb.pack()
+    abtlb.place(x=50,y=150)
     abt=Entry(child4)
     abt.pack()
-    eventsub=Button(child4,text="Submit",command=addevent)
+    abt.place(x=150,y=150)
+    eventsub=Button(child4,text="Submit",command=addevent, pady=10, padx=30,bg="#ab05e8")
     eventsub.pack()
+    eventsub.place(x=100,y=200)
+
+
     child4.mainloop()
 
 def Mywedding():
@@ -562,17 +553,20 @@ def check():
     global var
     global var
     child5=Toplevel()
-    child5.geometry("400x400")
+    child5.geometry("1920x1080")
+    child5.configure(bg="#EFA5FD")
     cur=conn.cursor()
     cur.execute("SELECT id,Date,Title FROM Event WHERE user_id=\"{userid}\"".format(userid=user_id))
     mylist=cur.fetchall()
     print(mylist)
     var = StringVar(child5,0)
     for x in mylist:
-        myradio=Radiobutton(child5, text=x[2], variable=var, value=x[2])
+        myradio=Radiobutton(child5, text=x[2], variable=var, value=x[2],bg="#EFA5FD")
         myradio.pack(anchor=W)
-    bttn=Button(child5,text="ok",command=Mywedding)
+
+    bttn=Button(child5,text="ok",command=Mywedding, pady=10, padx=30,bg="#ab05e8")
     bttn.pack()
+
 
 def dashboard():
     global child3
@@ -674,7 +668,11 @@ def signup():
     child1.mainloop()
 
 
-
+root=Tk()
+root.geometry("600x580")
+myimg= ImageTk.PhotoImage(Image.open("login.jpg"))
+mylabel= Label(root,image=myimg)
+mylabel.pack()
 logbtn=Button(root,text="Login",command=login,padx="50",pady="20",bg="#ab05e8")
 logbtn.pack()
 logbtn.place(x=140,y=300)
